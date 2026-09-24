@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #F7F4EE;
+  --color-surface: #FFFCF7;
+  --color-ink: #272522;
+  --color-muted: #777168;
+  --color-burgundy: #7A3038;
+  --color-burgundy-dark: #5B252B;
+  --color-sand: #E8DED0;
+  --color-line: #DDD6CA;
+  --color-gold: #B18A4A;
+
+  --font-serif: "Cormorant Garamond", "Georgia", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --radius-cover: 7px;
+
+  --app-width: 480px;
+
+  --shadow-soft: 0 1px 2px rgba(39, 37, 34, 0.04), 0 4px 14px rgba(39, 37, 34, 0.05);
+  --shadow-book: 0 1px 1px rgba(39, 37, 34, 0.08), 0 6px 16px -6px rgba(39, 37, 34, 0.28);
+  --shadow-book-lift: 0 2px 2px rgba(39, 37, 34, 0.08), 0 16px 30px -10px rgba(39, 37, 34, 0.35);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
+  body {
+    background: var(--color-sand);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .font-serif,
+  .page-title,
+  .section-title {
+    font-variant-numeric: lining-nums;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-burgundy) 18%, transparent);
+  }
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-burgundy) 55%, transparent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .page-title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .section-title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.1;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Lignes de cahier pour les annotations */
+  .journal-lines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 33px,
+      color-mix(in srgb, var(--color-line) 70%, transparent) 33px,
+      color-mix(in srgb, var(--color-line) 70%, transparent) 34px
+    );
+    line-height: 34px;
+  }
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* L'application est pensée pour le téléphone : sur un grand écran,
+   elle s'affiche dans une colonne de la largeur d'un mobile. */
+.app-shell {
+  position: relative;
+  min-height: 100dvh;
+  max-width: var(--app-width);
+  margin: 0 auto;
+  background: var(--color-paper);
+  box-shadow: 0 0 0 1px var(--color-line), 0 30px 80px -40px rgba(39, 37, 34, 0.35);
+}
+@media (max-width: 480px) {
+  .app-shell {
+    box-shadow: none;
+  }
+}
+
+/* Pas de surlignage ni de sélection intempestive au toucher */
+button,
+a {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
