@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowLeft, BookMarked, Library, Sparkles } from 'lucide-react'
+import { ArrowLeft, BookMarked, Library } from 'lucide-react'
 import { useLibrary, type ProfileInput, type StartWith } from '../store/library'
 import { cn } from '../lib/utils'
 import { Monogram } from '../components/Navigation'
 import { AvatarPicker, ProfileFields } from '../components/ProfileForm'
 import { Button } from '../components/ui'
 
-const STEPS = 4
-
 /** Premier lancement : création du profil, puis choix du point de départ. */
 export default function Onboarding() {
   const { createProfile, books } = useLibrary()
   // Des livres existent déjà sur ce téléphone (profil effacé ou ancienne version) : on propose de les garder
   const hasBooks = books.length > 0
+  const STEPS = hasBooks ? 4 : 3
   const [step, setStep] = useState(0)
   const [dir, setDir] = useState(1)
   const [profile, setProfile] = useState<ProfileInput>({ name: '', bio: '' })
@@ -96,14 +95,11 @@ export default function Onboarding() {
             {step === 3 && (
               <>
                 <h1 className="page-title mt-4">Par où commencer ?</h1>
-                <p className="mt-3 mb-8 text-[15px] text-muted">Vous pourrez toujours ajouter, retirer ou réinitialiser vos livres.</p>
+                <p className="mt-3 mb-8 text-[15px] text-muted">Des livres sont déjà enregistrés sur ce téléphone.</p>
                 <div role="radiogroup" className="space-y-3">
                   {[
-                    ...(hasBooks
-                      ? [{ value: 'garder' as const, icon: Library, title: 'Garder mes livres', text: `Les ${books.length} livres déjà présents sur ce téléphone.` }]
-                      : []),
-                    { value: 'vide' as const, icon: BookMarked, title: 'Une bibliothèque vide', text: 'Vous ajoutez vos propres livres, un par un.' },
-                    { value: 'exemples' as const, icon: Sparkles, title: 'Avec des livres d’exemple', text: 'Une vingtaine de classiques pour découvrir l’application.' },
+                    { value: 'garder' as const, icon: Library, title: 'Garder mes livres', text: `Les ${books.length} livres déjà présents sur ce téléphone.` },
+                    { value: 'vide' as const, icon: BookMarked, title: 'Repartir de zéro', text: 'Une bibliothèque vide, à remplir livre après livre.' },
                   ].map((o) => {
                     const active = start === o.value
                     return (

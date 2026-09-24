@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  // Chemins relatifs : l'app fonctionne aussi dans un sous-dossier (ex. GitHub Pages : /my-book/)
+  base: './',
   plugins: [
     react(),
     tailwindcss(),
@@ -15,8 +17,8 @@ export default defineConfig({
         short_name: 'My Book',
         description: 'Votre bibliothèque de poche : vos lectures, vos notes, vos coups de cœur.',
         lang: 'fr',
-        start_url: '/',
-        scope: '/',
+        start_url: './',
+        scope: './',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#F7F4EE',
@@ -31,7 +33,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-        navigateFallback: '/index.html',
+        navigateFallback: 'index.html',
         runtimeCaching: [
           {
             // Couvertures : elles ne changent pas, on les garde hors ligne

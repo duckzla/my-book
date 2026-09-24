@@ -1,9 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
-  SEED_ACTIVITY,
-  SEED_BOOKS,
-  SEED_TOP,
-  SEED_WISHLIST,
   type Activity,
   type ActivityKind,
   type Book,
@@ -25,7 +21,7 @@ export interface Profile {
 export type ProfileInput = Omit<Profile, 'handle' | 'since'>
 
 /** Point de départ choisi à la création du profil */
-export type StartWith = 'vide' | 'exemples' | 'garder'
+export type StartWith = 'vide' | 'garder'
 
 /** « Camille Dupont » → « camille-dupont » */
 export const toHandle = (name: string) =>
@@ -48,21 +44,16 @@ interface Persisted {
   activity: Activity[]
 }
 
-const seed = (): Persisted => ({
-  books: SEED_BOOKS,
-  wishlist: SEED_WISHLIST,
-  top: SEED_TOP,
-  activity: SEED_ACTIVITY,
-})
+const empty = (): Persisted => ({ books: [], wishlist: [], top: [], activity: [] })
 
 function load(): Persisted {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return { ...seed(), ...JSON.parse(raw) }
+    if (raw) return { ...empty(), ...JSON.parse(raw) }
   } catch {
-    /* stockage indisponible : on repart des données d'exemple */
+    /* stockage indisponible : on repart d'une bibliothèque vide */
   }
-  return seed()
+  return empty()
 }
 
 const uid = () => Math.random().toString(36).slice(2, 10)
@@ -86,7 +77,6 @@ interface LibraryApi extends Persisted {
   removeFromTop: (id: string) => void
   createProfile: (input: ProfileInput, start: StartWith) => void
   updateProfile: (input: ProfileInput) => void
-  resetDemo: () => void
   /** Efface tout, profil compris : l'écran d'accueil réapparaît */
   resetApp: () => void
   toast: (message: string) => void
@@ -217,13 +207,12 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       removeFromTop: (id) => setState((s) => ({ ...s, top: s.top.filter((x) => x !== id) })),
       createProfile: (input, start) =>
         setState((s) => ({
-          ...(start === 'garder' ? s : start === 'exemples' ? seed() : { books: [], wishlist: [], top: [], activity: [] }),
+          ...(start === 'garder' ? s : empty()),
           profile: { ...input, handle: toHandle(input.name), since: today() },
         })),
       updateProfile: (input) =>
         setState((s) => (s.profile ? { ...s, profile: { ...s.profile, ...input, handle: toHandle(input.name) } } : s)),
-      resetDemo: () => setState((s) => ({ ...seed(), profile: s.profile })),
-      resetApp: () => setState({ books: [], wishlist: [], top: [], activity: [] }),
+      resetApp: () => setState(empty()),
     }
   }, [state, toasts, toast])
 

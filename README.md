@@ -16,6 +16,14 @@ Puis ouvrir http://localhost:5173.
 - `npm run build` : produit la version de production dans `dist/`.
 - `npm run preview` : sert cette version en local.
 
+## Publication (GitHub Pages)
+
+À chaque envoi sur la branche `main`, le workflow `.github/workflows/deploy.yml` compile l'application et la publie sur GitHub Pages : `https://duckzla.github.io/my-book/`.
+
+À faire une seule fois, sur GitHub : **Settings → Pages → Build and deployment → Source : GitHub Actions**. GitHub Pages est gratuit pour un dépôt public ; pour un dépôt privé, il faut un compte payant.
+
+Les chemins sont relatifs (`base: './'` dans `vite.config.ts`) : l'app fonctionne donc aussi dans un sous-dossier.
+
 ## Application mobile (PWA)
 
 L'interface est conçue uniquement pour le téléphone : navigation en bas d'écran, feuilles qui glissent depuis le bas, zones tactiles d'au moins 44 px, gestion des encoches (`safe-area`). Sur un ordinateur, l'app s'affiche dans une colonne de la largeur d'un mobile (480 px maximum).
@@ -93,13 +101,13 @@ Une fois trouvé, le synopsis est enregistré avec le livre et n'est plus redema
 1. accueil ;
 2. prénom (obligatoire) et bio ;
 3. photo (facultative, réduite à 256 px) ;
-4. point de départ : bibliothèque vide, livres d'exemple, ou « Garder mes livres » si des livres sont déjà sur l'appareil.
+4. seulement si des livres sont déjà sur l'appareil : les garder ou repartir de zéro.
 
-**Profil.** Il se modifie depuis l'écran Profil, avec le bouton « Modifier ». Deux autres liens sont en bas de cet écran :
-- « Charger les livres d'exemple » ;
-- « Réinitialiser l'application », qui efface tout, profil compris, et ramène à l'écran d'accueil.
+L'application démarre avec une bibliothèque vide.
 
-**Stockage.** Tout est conservé dans le navigateur (`localStorage`, clé `ma-bibliotheque:v1`) : profil, livres, wishlist, Top et activité. Les livres d'exemple sont dans `src/data/books.ts`.
+**Profil.** Il se modifie depuis l'écran Profil, avec le bouton « Modifier ». En bas de cet écran, « Réinitialiser l'application » efface tout, profil compris, et ramène à l'écran d'accueil.
+
+**Stockage.** Tout est conservé dans le navigateur (`localStorage`, clé `ma-bibliotheque:v1`) : profil, livres, wishlist, Top et activité.
 
 **Limite actuelle : pas de compte en ligne.** Les données ne sont pas synchronisées entre appareils. L'adresse publique `mybook.fr/u/{prénom}` est préparée, mais ne fonctionnera qu'avec un serveur (Supabase, Firebase…).
 
@@ -111,5 +119,5 @@ src/
   pages/        Les 7 écrans
   store/        État de l'application (Context React + persistance)
   lib/          Client Open Library, utilitaires
-  data/         Types et données d'exemple
+  data/         Types et libellés
 ```

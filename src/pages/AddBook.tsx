@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowLeft, Barcode, ChevronDown, ChevronRight, Loader2, PenLine, Search, WifiOff } from 'lucide-react'
+import { ArrowLeft, Barcode, ChevronRight, Loader2, PenLine, Search, WifiOff } from 'lucide-react'
 import { isValidIsbn } from '../lib/openlibrary'
 import { resolveCover, searchFrench, searchFrenchByIsbn, type BookResult } from '../lib/bookSearch'
 import { useLibrary } from '../store/library'
@@ -58,7 +58,6 @@ export default function AddBook() {
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
   const [favorite, setFavorite] = useState(false)
-  const [editOpen, setEditOpen] = useState(false)
   const resultsScroll = useRef(0)
 
   // Une nouvelle recherche arrive par l'adresse (ex. depuis la recherche globale) alors que l'écran est déjà ouvert
@@ -133,7 +132,6 @@ export default function AddBook() {
       workKey: r.key?.startsWith('/works/') ? r.key : undefined,
       manual: r.manual,
     })
-    setEditOpen(!!r.manual)
     // La fiche s'ouvre comme une nouvelle page : on mémorise la position dans les résultats
     resultsScroll.current = window.scrollY
     window.scrollTo({ top: 0 })
@@ -217,57 +215,34 @@ export default function AddBook() {
             />
           )}
 
-          {/* Informations modifiables */}
-          <div className="mt-8 rounded-[var(--radius-card)] border border-line bg-surface">
-            <button
-              type="button"
-              onClick={() => setEditOpen((o) => !o)}
-              aria-expanded={editOpen}
-              className="flex min-h-13 w-full items-center justify-between gap-3 px-4 text-left text-[14.5px] font-medium"
-            >
-              <span className="flex items-center gap-2.5">
-                <PenLine size={16} strokeWidth={1.5} className="text-muted" /> {selected.manual ? 'Informations du livre' : 'Modifier les informations'}
-              </span>
-              <ChevronDown size={17} strokeWidth={1.5} className={cn('text-muted transition-transform', editOpen && 'rotate-180')} />
-            </button>
-            <AnimatePresence initial={false}>
-              {editOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="overflow-hidden"
-                >
-                  <div className="space-y-4 border-t border-line px-4 pt-4 pb-5">
-                    <Field label="Titre">
-                      <input className={inputClass + ' font-serif text-[20px]'} value={selected.title} onChange={(e) => setSelected({ ...selected, title: e.target.value })} placeholder="Le titre du livre" />
-                    </Field>
-                    <Field label="Auteur">
-                      <input className={inputClass} value={selected.author} onChange={(e) => setSelected({ ...selected, author: e.target.value })} placeholder="Nom de l’auteur" />
-                    </Field>
-                    <Field label="Genre">
-                      <div className="flex flex-wrap gap-1.5">
-                        {GENRES.slice(0, 8).map((g) => (
-                          <button
-                            key={g}
-                            type="button"
-                            onClick={() => setSelected({ ...selected, genre: g })}
-                            className={cn(
-                              'min-h-9 rounded-full border px-3.5 text-[13px] transition-colors',
-                              selected.genre === g ? 'border-ink bg-ink text-surface' : 'border-line text-ink hover:bg-paper',
-                            )}
-                          >
-                            {g}
-                          </button>
-                        ))}
-                      </div>
-                    </Field>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          {/* Saisie manuelle uniquement : les livres trouvés en ligne ne se modifient pas */}
+          {selected.manual && (
+            <div className="mt-8 space-y-4 rounded-[var(--radius-card)] border border-line bg-surface px-4 pt-4 pb-5">
+              <Field label="Titre">
+                <input className={inputClass + ' font-serif text-[20px]'} value={selected.title} onChange={(e) => setSelected({ ...selected, title: e.target.value })} placeholder="Le titre du livre" />
+              </Field>
+              <Field label="Auteur">
+                <input className={inputClass} value={selected.author} onChange={(e) => setSelected({ ...selected, author: e.target.value })} placeholder="Nom de l’auteur" />
+              </Field>
+              <Field label="Genre">
+                <div className="flex flex-wrap gap-1.5">
+                  {GENRES.slice(0, 8).map((g) => (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => setSelected({ ...selected, genre: g })}
+                      className={cn(
+                        'min-h-9 rounded-full border px-3.5 text-[13px] transition-colors',
+                        selected.genre === g ? 'border-ink bg-ink text-surface' : 'border-line text-ink hover:bg-paper',
+                      )}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+            </div>
+          )}
         </motion.article>
 
         {/* Où le ranger ? */}

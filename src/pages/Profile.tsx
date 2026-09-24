@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { ArrowRight, Crown, PenLine, RotateCcw, Share2, Trash2 } from 'lucide-react'
+import { ArrowRight, Crown, PenLine, Share2, Trash2 } from 'lucide-react'
 import { useLibrary, useProfile, useStats, type ProfileInput } from '../store/library'
 import { BookCover } from '../components/BookCover'
 import { RankingItem } from '../components/Ranking'
@@ -133,15 +133,6 @@ export default function Profile() {
       )}
 
       <div className="mt-20 flex flex-col items-center border-t border-line pt-6">
-        <button
-          onClick={() => {
-            lib.resetDemo()
-            lib.toast('Livres d’exemple chargés')
-          }}
-          className="inline-flex min-h-11 items-center gap-2 text-[13px] text-muted hover:text-ink"
-        >
-          <RotateCcw size={14} strokeWidth={1.5} /> Charger les livres d’exemple
-        </button>
         <button onClick={() => setConfirmReset(true)} className="inline-flex min-h-11 items-center gap-2 text-[13px] text-muted hover:text-burgundy">
           <Trash2 size={14} strokeWidth={1.5} /> Réinitialiser l’application
         </button>
